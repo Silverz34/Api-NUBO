@@ -23,8 +23,14 @@ class ManageActivity (private val repository: ActivityRepository) {
         return repository.save(activity)
 
     }
+     //traerActividadesDelMaestro
+    fun getTeacherActivity(teacherId: Int):List<Activity>{
+        return repository.findByTeacherId(teacherId)
+    }
 
-
-
+    //traerTodasLasTareasParaEstudiante
+    fun getAllActivities(): List<Activity>{
+        return repository.findAll()
+    }
 
 }
