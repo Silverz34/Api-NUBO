@@ -4,6 +4,8 @@ import domain.model.Activity
 
 
 interface ActivityRepository {
+    val findByLogin: Any
+
     fun save(activity: Activity): Activity
     fun findAll(): List<Activity>
     fun findByTeacherId(teacherId: Int): List<Activity>

@@ -36,4 +36,5 @@ dependencies {
     testImplementation(libs.kotlin.test.junit)
     implementation("io.ktor:ktor-serialization-jackson:$ktor_version")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2")
+    implementation("org.mindrot:jbcrypt:0.4")
 }
