@@ -5,6 +5,6 @@ data class Teacher(
     val nombre : String,
     val apellidos: String,
     val email : String,
-    val contraseña: String,
+    val contrasena: String,
     val escuela: String?
 )
