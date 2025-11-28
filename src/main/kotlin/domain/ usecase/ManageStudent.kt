@@ -3,6 +3,7 @@ package domain.` usecase`
 import domain.model.Student
 import domain.ports.StudentRepository
 import domain.ports.TeacherRepository
+import java.util.UUID
 
 class ManageStudent(
     private val studentRepository: StudentRepository,
@@ -25,8 +26,16 @@ class ManageStudent(
         return studentRepository.save(student)
     }
 
-    fun getMyStudent(teacherId: Int): List<Student> {
+    fun getMyStudent(teacherId: UUID): List<Student> {
         return studentRepository.findAllStudent(teacherId)
     }
+
+
+    fun deleteStudent(studentId: UUID){
+        val student = studentRepository.findById(studentId)?: throw Exception("Student not found")
+       studentRepository.delete(studentId)
+    }
+
+
 
 }

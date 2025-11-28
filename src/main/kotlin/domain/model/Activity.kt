@@ -7,8 +7,8 @@ import java.util.UUID
 @Serializable
 data class Activity(
     @Serializable(with = UUIDSerializer::class)
-    val id: UUID? = null,
-    val teacherId: Int,
+    val id: Int? = null,
+    val teacherId: UUID,
     val moduloId: Int,
     val title: String,
     val public: Boolean = true,
@@ -16,8 +16,7 @@ data class Activity(
 )
 
 data class ContentItem(
-    @Serializable(with = UUIDSerializer::class)
-    val id: UUID? = null,
+    val id: Int? = null,
     val texto: String,
     val imagenUrl : String,
     val silabas: List<String> = emptyList(),
