@@ -2,8 +2,10 @@ package domain.` usecase`
 
 import domain.model.Activity
 import domain.ports.ActivityRepository
+import java.util.UUID
 
 class ManageActivity (private val repository: ActivityRepository) {
+
     //crearActividad
     fun createActivity(activity: Activity): Activity {
         if(activity.moduloId==1){
@@ -25,7 +27,7 @@ class ManageActivity (private val repository: ActivityRepository) {
     }
 
      //traerActividadesDelMaestro
-    fun getTeacherActivity(teacherId: Int):List<Activity>{
+    fun getTeacherActivity(teacherId: UUID):List<Activity>{
         return repository.findByTeacherId(teacherId)
     }
 
@@ -34,6 +36,10 @@ class ManageActivity (private val repository: ActivityRepository) {
         return repository.findAll()
     }
 
+    fun  deleteActivity(activityId: UUID, requestingTeacherId:UUID){
+        val activity= repository.findById(activityId) ?: throw Exception("la actividad no existe")
+        repository.delete(activityId)
+    }
 
 
 }

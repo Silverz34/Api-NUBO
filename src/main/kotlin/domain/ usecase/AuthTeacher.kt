@@ -6,6 +6,7 @@ import domain.ports.TeacherRepository
 
 class AuthTeacher(private val repository: TeacherRepository,
     private val passwordEncoder: PasswordEncoderPort) {
+
     fun login(email: String, contrasenaRaw: String): Teacher{
         val teacher = repository.findByEmail(email)
 
