@@ -1,8 +1,8 @@
-package infrastructure.adapters.output
+package infrastructure.adapters.output.persistence.entity
 
+import infrastructure.adapters.output.persistence.entity.TeacherTable
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.ReferenceOption
-import java.util.UUID
 
 object activitiesTable: UUIDTable("activities"){
     val teacherId= reference("teacherId", TeacherTable, onDelete = ReferenceOption.CASCADE)

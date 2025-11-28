@@ -1,6 +1,6 @@
-package infrastructure.adapters.output
+package infrastructure.adapters.output.persistence.entity
 
-import domain.model.Teacher
+import infrastructure.adapters.output.persistence.entity.TeacherTable
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.ReferenceOption
 

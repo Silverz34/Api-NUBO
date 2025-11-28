@@ -1,7 +1,6 @@
-package infrastructure.adapters.output
+package infrastructure.adapters.output.persistence.entity
 
 import org.jetbrains.exposed.dao.id.UUIDTable
-
 
 object TeacherTable : UUIDTable("Teacher") {
     val nombre = varchar("nombre", 255)
