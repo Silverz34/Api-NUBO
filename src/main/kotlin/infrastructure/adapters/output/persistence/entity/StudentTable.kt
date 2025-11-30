@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.ReferenceOption
 
 object StudentTable: UUIDTable("student") {
     val teacherId = reference("teacher_id", TeacherTable, onDelete = ReferenceOption.CASCADE)
-    val nombre = varchar("nombre", 100)
+    val nombre = varchar("name", 100)
     val apellidoP = varchar("apellidoP", 100)
     val apellidoM = varchar("apellidoM", 100)
 }

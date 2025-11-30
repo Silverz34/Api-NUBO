@@ -1,4 +1,4 @@
-package com.example.infrastructure.config
+package infrastructure.config
 
 import com.fasterxml.jackson.databind.*
 import io.ktor.serialization.jackson.*

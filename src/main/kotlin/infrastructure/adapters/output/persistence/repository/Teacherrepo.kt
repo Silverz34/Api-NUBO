@@ -13,7 +13,7 @@ class Teacherrepo  : TeacherRepository {
 
     private fun ResultRow.toDomain(): Teacher {
         return Teacher(
-            id = this[TeacherTable.id].value,
+            teacher_id = this[TeacherTable.id].value,
             nombre = this[TeacherTable.nombre],
             apellidos =  this[TeacherTable.apellidos],
             email =  this[TeacherTable.email],
@@ -32,7 +32,7 @@ class Teacherrepo  : TeacherRepository {
                 it[escuela] = teacher.escuela
             }
         }
-        return teacher.copy(id = newId.value)
+        return teacher.copy(teacher_id = newId.value)
     }
 
 

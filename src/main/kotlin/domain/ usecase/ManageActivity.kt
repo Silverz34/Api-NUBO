@@ -12,19 +12,14 @@ class ManageActivity(private val repository: ActivityRepository) {
             val invalidItems = activity.content.filter {
                 it.silabas.isEmpty() || it.fonemas.isEmpty()
             }
-            if (invalidItems.isNotEmpty()) {
-                throw IllegalArgumentException(
-                    "Para el módulo 1, la actividad debe tener sílabas y fonemas"
-                )
+            if(invalidItems.isNotEmpty()){
+                throw IllegalArgumentException("La actividad debe de tener sílabas y grafemas.")
             }
         }
 
-        // Validaciones para módulo 2
-        if (activity.moduloId == 2) {
-            if (activity.content.size < 2) {
-                throw IllegalArgumentException(
-                    "Un memorama necesita al menos 2 imágenes"
-                )
+        if(activity.moduloId==2){
+            if(activity.content.size < 2){
+                throw IllegalArgumentException("Un memorama necesita al menos 2 imágenes.")
             }
         }
 
@@ -41,10 +36,10 @@ class ManageActivity(private val repository: ActivityRepository) {
         return repository.findAll()
     }
 
-    // Eliminar actividad con validación de permisos
-    fun deleteActivity(activityId: UUID, requestingTeacherId: UUID) {
-        val activity = repository.findById(activityId)
-            ?: throw Exception("La actividad no existe")
+    fun  deleteActivity(activityId: UUID, requestingTeacherId:UUID){
+        val activity= repository.findById(activityId) ?: throw Exception("La actividad no existe.")
+        repository.delete(activityId)
+    }
 
         // Verificar que el maestro es dueño de la actividad
         if (activity.teacherId != requestingTeacherId) {

@@ -43,21 +43,10 @@ fun Route.teacherRoutes(authUseCase: AuthTeacher) {
         post("/login") {
             try {
                 val request = call.receive<loginRequest>()
-                val loggedTeacher = authUseCase.login(request.email, request.contrasena)
-
-                // TODO: JWT - Generar token al hacer login
-                // val token = jwtService.generateToken(loggedTeacher.id, "TEACHER")
-                // call.respond(HttpStatusCode.OK, mapOf(
-                //     "token" to token,
-                //     "teacher" to loggedTeacher.toResponse()
-                // ))
-
+                val loggedTeacher =authUseCase.login(request.email, request.contraseña)
                 call.respond(HttpStatusCode.OK, loggedTeacher.toResponse())
-            } catch (e: Exception) {
-                call.respond(
-                    HttpStatusCode.Unauthorized,
-                    mapOf("error" to "Credenciales inválidas")
-                )
+            }catch(e:Exception){
+                call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "${e.message}"))
             }
         }
     }

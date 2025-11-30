@@ -6,6 +6,8 @@ import java.util.UUID
 
 @Serializable
 data class StudentDTO(
+    @Serializable(with = UUIDSerializer::class)
+    val teacherId: UUID,
     val nombre: String,
     val apellidoP: String,
     val apellidoM: String

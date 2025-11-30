@@ -11,18 +11,18 @@ class AuthTeacher(private val repository: TeacherRepository,
         val teacher = repository.findByEmail(email)
 
         if (teacher == null){
-            throw Exception("credenciales invalidas")
+            throw Exception("Credenciales invalidas")
         }
 
         if(!passwordEncoder.matches(contrasenaRaw,teacher.contrasena)){
-            throw Exception("invalid password")
+            throw Exception("Contraseña inválida")
         }
         return teacher
     }
 
     fun register(teacher: Teacher): Teacher{
         if(repository.findByEmail(teacher.email) != null){
-            throw Exception("Este correo ya esta registrado")
+            throw Exception("Este correo ya está registrado")
         }
         val secureTeacher= teacher.copy(
             contrasena = passwordEncoder.encode(teacher.contrasena)

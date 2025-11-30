@@ -16,14 +16,14 @@ data class TeacherDTOS(
 @Serializable
 data class loginRequest(
     val email: String,
-    val contrasena: String
+    val contraseña: String
 )
 
 @Serializable
 data class TeacherResponse(
     @Serializable(with = UUIDSerializer::class)
     val id : UUID,
-    val  fullname: String,
+    val fullname: String,
     val email: String,
     val escuela: String?
 )
