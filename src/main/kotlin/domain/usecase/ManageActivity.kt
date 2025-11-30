@@ -1,4 +1,4 @@
-package domain.invalidduplicate
+package domain.usecase
 
 import domain.model.Activity
 import domain.ports.ActivityRepository
@@ -38,8 +38,9 @@ class ManageActivity (private val repository: ActivityRepository) {
 
     fun  deleteActivity(activityId: UUID, requestingTeacherId:UUID){
         val activity= repository.findById(activityId) ?: throw Exception("la actividad no existe")
-        repository.delete(activityId)
+       repository.delete(activityId)
     }
+
 
 
 }

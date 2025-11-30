@@ -1,4 +1,4 @@
-package domain.invalidduplicate
+package domain.usecase
 
 import domain.model.Teacher
 import domain.ports.PasswordEncoderPort

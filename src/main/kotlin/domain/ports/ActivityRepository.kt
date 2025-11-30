@@ -5,8 +5,6 @@ import java.util.UUID
 
 
 interface ActivityRepository {
-    val findByLogin: Any
-
     fun save(activity: Activity): Activity
     fun findAll(): List<Activity>
     fun findByTeacherId(teacherId: UUID): List<Activity>

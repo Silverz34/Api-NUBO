@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
+    id("application")
     id("com.gradleup.shadow") version "9.2.2"
 }
 
@@ -10,7 +11,7 @@ version = "0.0.1"
 val ktor_version = "3.3.2"
 
 application {
-    mainClass = "infrastructure.ApplicationKt"
+    mainClass.set("infrastructure.ApplicationKt")
 }
 
 tasks {

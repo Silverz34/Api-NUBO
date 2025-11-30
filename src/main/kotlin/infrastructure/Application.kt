@@ -1,16 +1,15 @@
 package infrastructure
 
-
 import infrastructure.adapters.output.persistence.repository.ActivityRepo
 import infrastructure.adapters.output.persistence.repository.StudentRepo
 import infrastructure.adapters.output.persistence.repository.Teacherrepo
 import infrastructure.adapters.output.security.BCryptPassword
 import infrastructure.adapters.output.security.JwtProvider
 import infrastructure.adapters.input.http.routes.teacherRoutes
-import domain.` usecase`.AuthStudent
-import domain.` usecase`.AuthTeacher
-import domain.` usecase`.ManageActivity
-import domain.` usecase`.ManageStudent
+import domain.usecase.AuthStudent
+import domain.usecase.AuthTeacher
+import domain.usecase.ManageActivity
+import domain.usecase.ManageStudent
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
@@ -59,7 +58,7 @@ fun Application.module() {
     // Instantiate repositories, adapters and use cases
     val teacherRepo = Teacherrepo()
     val studentRepo = StudentRepo()
-    val activityRepo = ActivityRepo(Unit)
+    val activityRepo = ActivityRepo()
 
     val passwordEncoder = BCryptPassword()
 

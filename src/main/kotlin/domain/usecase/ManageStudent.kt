@@ -1,4 +1,4 @@
-package domain.invalidduplicate
+package domain.usecase
 
 import domain.model.Student
 import domain.ports.StudentRepository
