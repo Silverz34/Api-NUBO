@@ -13,13 +13,13 @@ class ManageActivity (private val repository: ActivityRepository) {
                 it.silabas.isEmpty()|| it.fonemas.isEmpty()
             }
             if(invalidItems.isNotEmpty()){
-                throw IllegalArgumentException("para el modulo1, la actividad debe tener silabas y fonemas")
+                throw IllegalArgumentException("Para el módulo, la actividad debe de tener sílabas y grafemas.")
             }
         }
 
         if(activity.moduloId==2){
             if(activity.content.size < 2){
-                throw IllegalArgumentException("un memorama necesita al menos 2 imagenes")
+                throw IllegalArgumentException("Un memorama necesita al menos 2 imágenes.")
             }
         }
         return repository.save(activity)
@@ -37,7 +37,7 @@ class ManageActivity (private val repository: ActivityRepository) {
     }
 
     fun  deleteActivity(activityId: UUID, requestingTeacherId:UUID){
-        val activity= repository.findById(activityId) ?: throw Exception("la actividad no existe")
+        val activity= repository.findById(activityId) ?: throw Exception("La actividad no existe.")
         repository.delete(activityId)
     }
 
