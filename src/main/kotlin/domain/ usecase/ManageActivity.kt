@@ -13,7 +13,7 @@ class ManageActivity (private val repository: ActivityRepository) {
                 it.silabas.isEmpty()|| it.fonemas.isEmpty()
             }
             if(invalidItems.isNotEmpty()){
-                throw IllegalArgumentException("Para el módulo, la actividad debe de tener sílabas y grafemas.")
+                throw IllegalArgumentException("La actividad debe de tener sílabas y grafemas.")
             }
         }
 
