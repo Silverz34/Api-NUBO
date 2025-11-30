@@ -33,10 +33,10 @@ fun main() {
 
 fun Application.module() {
     // Database connection (Postgres) - environment variables recommended
-    val dbUrl = System.getenv("JDBC_DATABASE_URL") ?: "jdbc:postgresql://localhost:5432/nubo"
-    val dbUser = System.getenv("DB_USER") ?: "postgres"
-    val dbPass = System.getenv("DB_PASSWORD") ?: "postgres"
-    val dbDriver = System.getenv("DB_DRIVER") ?: "org.postgresql.Driver"
+    val dbUrl = "jdbc:postgresql://localhost:5432/postgres"
+    val dbUser = "postgres"
+    val dbPass = "RHVlcm1hbiBhIG1pamFuZ29z"
+    val dbDriver = "org.postgresql.Driver"
     Database.connect(url = dbUrl, driver = dbDriver, user = dbUser, password = dbPass)
 
     // Content negotiation / serialization
