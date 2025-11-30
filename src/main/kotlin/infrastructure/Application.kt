@@ -11,6 +11,7 @@ import domain.` usecase`.AuthStudent
 import domain.` usecase`.AuthTeacher
 import domain.` usecase`.ManageActivity
 import domain.` usecase`.ManageStudent
+import infrastructure.adapters.input.http.routes.studentRoutes
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
@@ -75,6 +76,6 @@ fun Application.module() {
         // Teacher routes (register/login) — uses AuthTeacher usecase
         teacherRoutes(authTeacher)
 
-        // TODO: add studentRoutes(manageStudent, authStudent) when implemented
+        studentRoutes(manageStudent, authStudent)
     }
 }

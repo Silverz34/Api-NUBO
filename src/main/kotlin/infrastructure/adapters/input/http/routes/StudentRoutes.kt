@@ -62,15 +62,13 @@ fun Route.studentRoutes(manageUse: ManageStudent, authUse: AuthStudent) {
                     ?: return@delete call.respond(HttpStatusCode.BadRequest, mapOf("message" to "ID de estudiante no válido."))
 
                 manageUse.deleteStudent(studentId)
-                call.respond(HttpStatusCode.NoContent)
+                call.respond(HttpStatusCode.OK, mapOf("message" to "Estudiante eliminado con éxito."))
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.NotFound, mapOf("message" to e.message))
             }
         }
-    }
 
-    route("/students/login") {
-        post {
+        post("/login") {
             try {
                 val loginData = call.receive<StudentLogin>()
 
@@ -85,5 +83,6 @@ fun Route.studentRoutes(manageUse: ManageStudent, authUse: AuthStudent) {
                 call.respond(HttpStatusCode.Unauthorized, mapOf("message" to e.message))
             }
         }
+
     }
 }
