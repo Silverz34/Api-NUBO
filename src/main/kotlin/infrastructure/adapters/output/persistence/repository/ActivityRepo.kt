@@ -10,11 +10,11 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.UUID
 
-
-class ActivityRepo(override val findByLogin: Any) : ActivityRepository{
+class ActivityRepo(override val findByLogin: Any) : ActivityRepository {
 
     override fun save(activity: Activity): Activity {
         return transaction {
@@ -22,11 +22,11 @@ class ActivityRepo(override val findByLogin: Any) : ActivityRepository{
                 it[teacherId] = activity.teacherId
                 it[moduleId] = activity.moduloId
                 it[titulo] = activity.titulo
-                it[tipo]= if(activity.moduloId == 1) "Palabras" else "Memorama"
-                it[ispublic]= activity.public
+                it[tipo] = if (activity.moduloId == 1) "Palabras" else "Memorama"
+                it[ispublic] = activity.public
             }.value
 
-            activity.content.forEach { item->
+            activity.content.forEach { item ->
                 ActivityContents.insert {
                     it[activityId] = newActivityId
                     it[texto] = item.texto
@@ -35,11 +35,12 @@ class ActivityRepo(override val findByLogin: Any) : ActivityRepository{
                     it[fonemas] = item.fonemas.joinToString(",")
                 }
             }
+
             activity.copy(id = newActivityId)
         }
     }
 
-    override fun delete(activityId: UUID){
+    override fun delete(activityId: UUID) {
         transaction {
             activitiesTable.deleteWhere { activitiesTable.id eq activityId }
         }
@@ -47,32 +48,89 @@ class ActivityRepo(override val findByLogin: Any) : ActivityRepository{
 
     override fun findById(activityId: UUID): Activity? {
         return transaction {
-            val row = activitiesTable.select { activitiesTable.id eq activityId }.singleOrNull()
-                ?: return@transaction null
+            val row = activitiesTable.select { activitiesTable.id eq activityId }
+                .singleOrNull() ?: return@transaction null
 
-            val content = ActivityContents.select { ActivityContents.activityId eq activityId }
-                .map{ contentRow ->
-                    ContentItem(
-                        id = contentRow[ActivityContents.id].value,
-                        texto =  contentRow[ActivityContents.texto],
-                        imagenUrl = contentRow[ActivityContents.imagenUrl],
-                        silabas = contentRow[ActivityContents.silabas]?.split(",")?: emptyList(),
-                        fonemas = contentRow[ActivityContents.fonemas]?.split(",")?: emptyList()
-                    )
+            val content = ActivityContents.select {
+                ActivityContents.activityId eq activityId
+            }.map { contentRow ->
+                ContentItem(
+                    id = contentRow[ActivityContents.id].value,
+                    texto = contentRow[ActivityContents.texto],
+                    imagenUrl = contentRow[ActivityContents.imagenUrl],
+                    silabas = contentRow[ActivityContents.silabas]?.split(",") ?: emptyList(),
+                    fonemas = contentRow[ActivityContents.fonemas]?.split(",") ?: emptyList()
+                )
+            }
 
-                }
             Activity(
                 id = row[activitiesTable.id].value,
                 teacherId = row[activitiesTable.teacherId].value,
                 moduloId = row[activitiesTable.moduleId],
                 titulo = row[activitiesTable.titulo],
-                public =  row[activitiesTable.ispublic],
+                public = row[activitiesTable.ispublic],
                 content = content
             )
-
         }
     }
 
-    override fun findAll(): List<Activity> { return emptyList()}
-    override fun findByTeacherId(teacherId: UUID): List<Activity> { return emptyList()}
+    // Obtener todas las actividades públicas
+    override fun findAll(): List<Activity> {
+        return transaction {
+            activitiesTable.selectAll()
+                .map { row ->
+                    val activityId = row[activitiesTable.id].value
+                    val content = ActivityContents.select {
+                        ActivityContents.activityId eq activityId
+                    }.map { contentRow ->
+                        ContentItem(
+                            id = contentRow[ActivityContents.id].value,
+                            texto = contentRow[ActivityContents.texto],
+                            imagenUrl = contentRow[ActivityContents.imagenUrl],
+                            silabas = contentRow[ActivityContents.silabas]?.split(",") ?: emptyList(),
+                            fonemas = contentRow[ActivityContents.fonemas]?.split(",") ?: emptyList()
+                        )
+                    }
+
+                    Activity(
+                        id = activityId,
+                        teacherId = row[activitiesTable.teacherId].value,
+                        moduloId = row[activitiesTable.moduleId],
+                        titulo = row[activitiesTable.titulo],
+                        public = row[activitiesTable.ispublic],
+                        content = content
+                    )
+                }
+        }
+    }
+
+    // Obtener actividades por teacherId
+    override fun findByTeacherId(teacherId: UUID): List<Activity> {
+        return transaction {
+            activitiesTable.select { activitiesTable.teacherId eq teacherId }
+                .map { row ->
+                    val activityId = row[activitiesTable.id].value
+                    val content = ActivityContents.select {
+                        ActivityContents.activityId eq activityId
+                    }.map { contentRow ->
+                        ContentItem(
+                            id = contentRow[ActivityContents.id].value,
+                            texto = contentRow[ActivityContents.texto],
+                            imagenUrl = contentRow[ActivityContents.imagenUrl],
+                            silabas = contentRow[ActivityContents.silabas]?.split(",") ?: emptyList(),
+                            fonemas = contentRow[ActivityContents.fonemas]?.split(",") ?: emptyList()
+                        )
+                    }
+
+                    Activity(
+                        id = activityId,
+                        teacherId = row[activitiesTable.teacherId].value,
+                        moduloId = row[activitiesTable.moduleId],
+                        titulo = row[activitiesTable.titulo],
+                        public = row[activitiesTable.ispublic],
+                        content = content
+                    )
+                }
+        }
+    }
 }
