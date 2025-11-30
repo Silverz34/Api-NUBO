@@ -1,6 +1,7 @@
 package infrastructure.adapters.input.http.routes
 
 import domain.` usecase`.AuthTeacher
+import domain.usecase.AuthTeacher
 import infrastructure.adapters.input.http.dto.TeacherDTOS
 import infrastructure.adapters.input.http.dto.loginRequest
 import infrastructure.adapters.input.http.mappers.toDomain
@@ -14,20 +15,33 @@ import io.ktor.server.routing.route
 
 fun Route.teacherRoutes(authUseCase: AuthTeacher) {
     route("/teacher") {
-        post("/register"){
-            try{
+
+        // Registro de maestro
+        post("/register") {
+            try {
                 val request = call.receive<TeacherDTOS>()
                 val domainTeacher = request.toDomain()
                 val createdTeacher = authUseCase.register(domainTeacher)
-                call.respond(HttpStatusCode.Created, createdTeacher.toResponse())
 
-            }catch (e : Exception){
-                call.respond(HttpStatusCode.Conflict, mapOf("error" to "${e.message}"))
+                // TODO: JWT - Generar token al registrarse
+                // val token = jwtService.generateToken(createdTeacher.id, "TEACHER")
+                // call.respond(HttpStatusCode.Created, mapOf(
+                //     "token" to token,
+                //     "teacher" to createdTeacher.toResponse()
+                // ))
+
+                call.respond(HttpStatusCode.Created, createdTeacher.toResponse())
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.Conflict,
+                    mapOf("error" to "${e.message}")
+                )
             }
         }
 
-        post("/login"){
-            try{
+        // Login de maestro
+        post("/login") {
+            try {
                 val request = call.receive<loginRequest>()
                 val loggedTeacher =authUseCase.login(request.email, request.contraseña)
                 call.respond(HttpStatusCode.OK, loggedTeacher.toResponse())
