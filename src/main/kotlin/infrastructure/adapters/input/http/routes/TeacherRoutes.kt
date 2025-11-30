@@ -1,5 +1,6 @@
 package infrastructure.adapters.input.http.routes
 
+import domain.` usecase`.AuthTeacher
 import domain.usecase.AuthTeacher
 import infrastructure.adapters.input.http.dto.TeacherDTOS
 import infrastructure.adapters.input.http.dto.loginRequest

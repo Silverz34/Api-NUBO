@@ -1,5 +1,7 @@
 package infrastructure.adapters.input.http.routes
 
+import domain.` usecase`.AuthStudent
+import domain.` usecase`.ManageStudent
 import domain.usecase.ManageStudent
 import domain.usecase.AuthStudent
 import infrastructure.adapters.input.http.dto.StudentDTO
