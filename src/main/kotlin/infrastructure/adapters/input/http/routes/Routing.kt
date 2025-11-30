@@ -1,4 +1,4 @@
-package com.example.infrastructure.adapters.input.http.routes
+package infrastructure.adapters.input.http.routes
 
 import io.ktor.server.application.*
 import io.ktor.server.response.*

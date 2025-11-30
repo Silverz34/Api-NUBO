@@ -6,7 +6,7 @@ import infrastructure.adapters.input.http.dto.TeacherResponse
 
 fun TeacherDTOS.toDomain(): Teacher {
     return Teacher(
-        id = null,
+        teacher_id = null,
         nombre = this.nombre,
         apellidos = this.apellidos,
         email = this.email,
@@ -17,7 +17,7 @@ fun TeacherDTOS.toDomain(): Teacher {
 
 fun Teacher.toResponse(): TeacherResponse {
     return TeacherResponse(
-        id = this.id!!,
+        id = this.teacher_id!!,
         fullname = "${this.nombre} ${this.apellidos}",
         email = this.email,
         escuela = this.escuela

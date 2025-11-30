@@ -29,9 +29,10 @@ fun Route.teacherRoutes(authUseCase: AuthTeacher) {
         post("/login"){
             try{
                 val request = call.receive<loginRequest>()
-                val loggedTeacher =authUseCase.login(request.email, request.contrasena)
+                val loggedTeacher =authUseCase.login(request.email, request.contraseña)
+                call.respond(HttpStatusCode.OK, loggedTeacher.toResponse())
             }catch(e:Exception){
-                call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "credenciales invalidas"))
+                call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "${e.message}"))
             }
         }
     }
