@@ -1,116 +1,84 @@
-package com.example.infrastructure
+package infrastructure
 
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
-import io.ktor.http.*
-import io.ktor.serialization.jackson.*
+
+import infrastructure.adapters.output.persistence.repository.ActivityRepo
+import infrastructure.adapters.output.persistence.repository.StudentRepo
+import infrastructure.adapters.output.persistence.repository.Teacherrepo
+import infrastructure.adapters.output.security.BCryptPassword
+import infrastructure.adapters.output.security.JwtProvider
+import infrastructure.adapters.input.http.routes.teacherRoutes
+import domain.` usecase`.AuthStudent
+import domain.` usecase`.AuthTeacher
+import domain.` usecase`.ManageActivity
+import domain.` usecase`.ManageStudent
+import infrastructure.adapters.input.http.routes.activityRoutes
+import infrastructure.adapters.input.http.routes.studentRoutes
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import java.util.*
-
-// 1. Modelo de Usuario (Simulando DB)
-data class User(val username: String, val pass: String, val role: String)
-
-// Base de datos en memoria
-val usersDb = listOf(
-    User("admin", "admin123", "ADMIN"),
-    User("pepe", "pepe123", "USER")
-)
-
-// Configuración simple de JWT
-val secret = "mi_secreto_super_secreto"
-val issuer = "mi-api"
-val audience = "mi-app"
+import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.serialization.jackson.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import org.jetbrains.exposed.sql.Database
 
 fun main() {
-    embeddedServer(Netty, port = 9000, host = "0.0.0.0", module = Application::module)
-        .start(wait = true)
+    embeddedServer(
+        Netty,
+        port = System.getenv("PORT")?.toInt() ?: 9000,
+        host = "0.0.0.0",
+        module = Application::module
+    ).start(wait = true)
 }
 
 fun Application.module() {
-    // 2. Instalar ContentNegotiation
+    // Database connection (Postgres) - environment variables recommended
+    val dbUrl = "jdbc:postgresql://localhost:5432/postgres"
+    val dbUser = "postgres"
+    val dbPass = "RHVlcm1hbiBhIG1pamFuZ29z"
+    val dbDriver = "org.postgresql.Driver"
+    Database.connect(url = dbUrl, driver = dbDriver, user = dbUser, password = dbPass)
+
+    // Content negotiation / serialization
     install(ContentNegotiation) {
         jackson()
     }
 
-    // 3. Configuración de Seguridad
+    // Authentication (JWT) using JwtProvider
     install(Authentication) {
         jwt("auth-jwt") {
             realm = "Access to API"
-            verifier(
-                JWT.require(Algorithm.HMAC256(secret))
-                    .withAudience(audience)
-                    .withIssuer(issuer)
-                    .build()
-            )
+            verifier(JwtProvider.verifier)
             validate { credential ->
-                // Si audiencia válida permitimos el paso
-                if (credential.payload.audience.contains(audience)) {
-                    JWTPrincipal(credential.payload)
-                } else null
+                // Audience check (kept minimal here)
+                if (credential.payload.audience.contains("nubo-app")) JWTPrincipal(credential.payload) else null
             }
         }
     }
 
-    // 4. Rutas
+    // Instantiate repositories, adapters and use cases
+    val teacherRepo = Teacherrepo()
+    val studentRepo = StudentRepo()
+    val activityRepo = ActivityRepo(Unit)
+
+    val passwordEncoder = BCryptPassword()
+
+    val authTeacher = AuthTeacher(teacherRepo, passwordEncoder)
+    val manageStudent = ManageStudent(studentRepo, teacherRepo)
+    val authStudent = AuthStudent(studentRepo)
+    val manageActivity = ManageActivity(activityRepo)
+
+    // Routing: expose routes implemented in adapters/input/http/routes
     routing {
-        // RUTA PÚBLICA: Login
-        post("/login") {
-            // Recibir datos del body
-            val params = call.receive<Map<String, String>>()
-            val user = params["username"]
-            val pass = params["password"]
+        get("/") { call.respondText("NUBO API") }
 
-            // Buscar usuario
-            val foundUser = usersDb.find { it.username == user && it.pass == pass }
+        // Teacher routes (register/login) — uses AuthTeacher usecase
+        teacherRoutes(authTeacher)
 
-            if (foundUser != null) {
-                // Generar Token
-                val token = JWT.create()
-                    .withAudience(audience)
-                    .withIssuer(issuer)
-                    .withClaim("username", foundUser.username)
-                    .withClaim("role", foundUser.role) // Guardamos el rol en el token
-                    .withExpiresAt(Date(System.currentTimeMillis() + 600000)) // 10 minutos
-                    .sign(Algorithm.HMAC256(secret))
+        studentRoutes(manageStudent, authStudent)
 
-                call.respond(mapOf("token" to token))
-            } else {
-                call.respond(HttpStatusCode.Unauthorized, "Credenciales inválidas")
-            }
-        }
-
-        // RUTAS PROTEGIDAS
-        authenticate("auth-jwt") {
-
-            // Ruta para Administrador
-            get("/admin") {
-                val principal = call.principal<JWTPrincipal>()
-                val role = principal!!.payload.getClaim("role").asString()
-
-                if (role == "ADMIN") {
-                    call.respond(mapOf("message" to "Hola Admin, tienes acceso total."))
-                } else {
-                    call.respond(HttpStatusCode.Forbidden, "No tienes permisos de administrador.")
-                }
-            }
-
-            // Ruta para Usuario Común
-            get("/user") {
-                val principal = call.principal<JWTPrincipal>()
-                val username = principal!!.payload.getClaim("username").asString()
-                val role = principal.payload.getClaim("role").asString()
-
-                // ADMIN y USER
-                call.respond(mapOf("message" to "Hola $username, eres un $role. Bienvenido."))
-            }
-        }
+        activityRoutes(manageActivity)
     }
 }

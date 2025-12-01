@@ -4,13 +4,13 @@ plugins {
     id("com.gradleup.shadow") version "9.2.2"
 }
 
-group = "com.example"
+group = "infrastructure"
 version = "0.0.1"
 
 val ktor_version = "3.3.2"
 
 application {
-    mainClass = "com.example.ApplicationKt"
+    mainClass = "infrastructure.ApplicationKt"
 }
 
 tasks {
@@ -18,7 +18,7 @@ tasks {
         // Esto evita conflictos con nombres de archivos duplicados en librerías
         mergeServiceFiles()
         manifest {
-            attributes(mapOf("Main-Class" to "com.example.ApplicationKt"))
+            attributes(mapOf("Main-Class" to "infrastructure.ApplicationKt"))
         }
         // Opcional: Nombre fijo para no tener versiones en el nombre del archivo
         archiveFileName.set("mi-apiNubo.jar")
@@ -38,9 +38,9 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2")
     implementation("org.mindrot:jbcrypt:0.4")
 
-    implementation("org.jetbrains.exposed:exposed-core:0.41.1")
-    implementation("org.jetbrains.exposed:exposed-jdbc:0.41.1")
-    implementation("org.jetbrains.exposed:exposed-dao:0.41.1")
+    implementation("org.jetbrains.exposed:exposed-core:0.51.1")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.51.1")
+    implementation("org.jetbrains.exposed:exposed-dao:0.51.1")
     implementation("org.postgresql:postgresql:42.7.7")
 
 }

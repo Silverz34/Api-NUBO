@@ -1,0 +1,199 @@
+package infrastructure.adapters.input.http.routes
+
+import domain.` usecase`.ManageActivity
+import domain.model.Activity
+import infrastructure.adapters.input.http.dto.ActivityDTO
+import infrastructure.adapters.input.http.mappers.toDomain
+import infrastructure.adapters.input.http.mappers.toResponse
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.request.receive
+import io.ktor.server.response.respond
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.get
+import io.ktor.server.routing.post
+import io.ktor.server.routing.delete
+import io.ktor.server.routing.route
+import java.util.UUID
+
+fun Route.activityRoutes(manageActivityUseCase: ManageActivity) {
+    route("/activities") {
+        // Obtener todas las actividades públicas
+        get {
+            try {
+                val activities = manageActivityUseCase.getAllActivities()
+                call.respond(HttpStatusCode.OK, activities)
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    mapOf("error" to "Error al obtener actividades: ${e.message}")
+                )
+            }
+        }
+
+        // Obtener una actividad específica por ID
+        get("/{activityId}") {
+            try {
+                val activityIdParam = call.parameters["activityId"]
+                    ?: return@get call.respond(
+                        HttpStatusCode.BadRequest,
+                        mapOf("error" to "activityId es requerido")
+                    )
+
+                val activityId = try {
+                    UUID.fromString(activityIdParam)
+                } catch (e: IllegalArgumentException) {
+                    return@get call.respond(
+                        HttpStatusCode.BadRequest,
+                        mapOf("error" to "ID de actividad inválido: ${e.message}")
+                    )
+                }
+
+                val activity = manageActivityUseCase.getAllActivities()
+                    .find { it.id == activityId }
+                    ?: return@get call.respond(
+                        HttpStatusCode.NotFound,
+                        mapOf("error" to "Actividad no encontrada")
+                    )
+
+                call.respond(HttpStatusCode.OK, activity)
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    mapOf("error" to e.message)
+                )
+            }
+        }
+    }
+
+    // Rutas protegidas para maestros
+    route("/teacher/{teacherId}/activities") {
+        // TODO: JWT - Aplicar autenticación aquí
+        // authenticate("auth-jwt") {
+
+        // Crear nueva actividad
+        post {
+            try {
+                val teacherIdParam = call.parameters["teacherId"]
+                    ?: return@post call.respond(
+                        HttpStatusCode.BadRequest,
+                        mapOf("error" to "teacherId es requerido")
+                    )
+
+                val teacherId = try {
+                    UUID.fromString(teacherIdParam)
+                } catch (e: IllegalArgumentException) {
+                    return@post call.respond(
+                        HttpStatusCode.BadRequest,
+                        mapOf("error" to "ID de maestro inválido: ${e.message}")
+                    )
+                }
+
+                // TODO: JWT - Validar que el token JWT pertenece a este teacherId
+                // val jwtTeacherId = call.principal<JWTPrincipal>()?.payload?.getClaim("userId")?.asString()
+                // if (jwtTeacherId != teacherIdParam) {
+                //     return@post call.respond(HttpStatusCode.Forbidden, mapOf("error" to "No autorizado"))
+                // }
+
+                val request = call.receive<ActivityDTO>()
+
+                val activity = request.toDomain()
+
+                // Validar que el teacherId de la actividad coincide
+                if (activity.teacherId != teacherId) {
+                    return@post call.respond(
+                        HttpStatusCode.BadRequest,
+                        mapOf("error" to "teacherId no coincide")
+                    )
+                }
+
+                val createdActivity = manageActivityUseCase.createActivity(activity)
+                call.respond(HttpStatusCode.Created, createdActivity.toResponse())
+            } catch (e: IllegalArgumentException) {
+                call.respond(HttpStatusCode.BadRequest, mapOf("error" to e.message))
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.Conflict, mapOf("error" to e.message))
+            }
+        }
+
+        // Obtener todas las actividades de un maestro
+        get {
+            try {
+                val teacherIdParam = call.parameters["teacherId"]
+                    ?: return@get call.respond(
+                        HttpStatusCode.BadRequest,
+                        mapOf("error" to "teacherId es requerido")
+                    )
+
+                val teacherId = try {
+                    UUID.fromString(teacherIdParam)
+                } catch (e: IllegalArgumentException) {
+                    return@get call.respond(
+                        HttpStatusCode.BadRequest,
+                        mapOf("error" to "teacherId inválido")
+                    )
+                }
+
+                // TODO: JWT - Validar que el token JWT pertenece a este teacherId
+
+                val activities = manageActivityUseCase.getTeacherActivity(teacherId)
+                call.respond(HttpStatusCode.OK, activities)
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    mapOf("error" to "Error al obtener actividades: ${e.message}")
+                )
+            }
+        }
+
+        // Eliminar actividad
+        delete("/{activityId}") {
+            try {
+                val teacherIdParam = call.parameters["teacherId"]
+                    ?: return@delete call.respond(
+                        HttpStatusCode.BadRequest,
+                        mapOf("error" to "teacherId es requerido")
+                    )
+
+                val activityIdParam = call.parameters["activityId"]
+                    ?: return@delete call.respond(
+                        HttpStatusCode.BadRequest,
+                        mapOf("error" to "activityId es requerido")
+                    )
+
+                val teacherId = try {
+                    UUID.fromString(teacherIdParam)
+                } catch (e: IllegalArgumentException) {
+                    return@delete call.respond(
+                        HttpStatusCode.BadRequest,
+                        mapOf("error" to "teacherId inválido")
+                    )
+                }
+
+                val activityId = try {
+                    UUID.fromString(activityIdParam)
+                } catch (e: IllegalArgumentException) {
+                    return@delete call.respond(
+                        HttpStatusCode.BadRequest,
+                        mapOf("error" to "activityId inválido")
+                    )
+                }
+
+                // TODO: JWT - Validar que el token JWT pertenece a este teacherId
+
+                manageActivityUseCase.deleteActivity(activityId, teacherId)
+
+                call.respond(
+                    HttpStatusCode.OK,
+                    mapOf("message" to "Actividad eliminada exitosamente")
+                )
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    mapOf("error" to e.message)
+                )
+            }
+        }
+
+        // } // Cerrar authenticate cuando se implemente JWT
+    }
+}

@@ -8,7 +8,7 @@ import java.util.UUID
 @Serializable
 data class Teacher(
     @Serializable(with = UUIDSerializer::class)
-    val id: UUID? = null,
+    val teacher_id: UUID? = null,
     val nombre : String,
     val apellidos: String,
     val email : String,
