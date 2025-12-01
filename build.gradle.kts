@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
@@ -12,6 +15,19 @@ val ktor_version = "3.3.2"
 application {
     mainClass = "infrastructure.ApplicationKt"
 }
+
+// Align Java and Kotlin compilation targets to Java 21
+kotlin {
+    jvmToolchain(21)
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+
+
 
 tasks {
     shadowJar {
