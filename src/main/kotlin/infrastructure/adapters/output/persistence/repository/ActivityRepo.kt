@@ -32,7 +32,7 @@ class ActivityRepo(override val findByLogin: Any) : ActivityRepository {
                     it[texto] = item.texto
                     it[imagenUrl] = item.imagenUrl
                     it[silabas] = item.silabas.joinToString(",")
-                    it[fonemas] = item.grafemas.joinToString(",")
+                    it[grafemas] = item.grafemas
                 }
             }
 
@@ -59,7 +59,7 @@ class ActivityRepo(override val findByLogin: Any) : ActivityRepository {
                     texto = contentRow[ActivityContents.texto],
                     imagenUrl = contentRow[ActivityContents.imagenUrl],
                     silabas = contentRow[ActivityContents.silabas]?.split(",") ?: emptyList(),
-                    grafemas = contentRow[ActivityContents.fonemas]?.split(",") ?: emptyList()
+                    grafemas = contentRow[ActivityContents.grafemas]?: emptyList()
                 )
             }
 
@@ -89,7 +89,7 @@ class ActivityRepo(override val findByLogin: Any) : ActivityRepository {
                             texto = contentRow[ActivityContents.texto],
                             imagenUrl = contentRow[ActivityContents.imagenUrl],
                             silabas = contentRow[ActivityContents.silabas]?.split(",") ?: emptyList(),
-                            grafemas = contentRow[ActivityContents.fonemas]?.split(",") ?: emptyList()
+                            grafemas = contentRow[ActivityContents.grafemas] ?: emptyList()
                         )
                     }
 
@@ -120,7 +120,7 @@ class ActivityRepo(override val findByLogin: Any) : ActivityRepository {
                             texto = contentRow[ActivityContents.texto],
                             imagenUrl = contentRow[ActivityContents.imagenUrl],
                             silabas = contentRow[ActivityContents.silabas]?.split(",") ?: emptyList(),
-                            grafemas = contentRow[ActivityContents.fonemas]?.split(",") ?: emptyList()
+                            grafemas = contentRow[ActivityContents.grafemas] ?: emptyList()
                         )
                     }
 
