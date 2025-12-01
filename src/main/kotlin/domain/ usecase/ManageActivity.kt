@@ -1,4 +1,4 @@
-package domain.usecase
+package domain.` usecase`
 
 import domain.model.Activity
 import domain.ports.ActivityRepository
@@ -8,16 +8,16 @@ class ManageActivity(private val repository: ActivityRepository) {
     fun createActivity(activity: Activity): Activity {
 
         // Validaciones para módulo 1
-        if (activity.moduloId == 1) {
+        if (activity.moduloId == UUID.fromString("14387d49-4a1a-47d1-aa47-5a700db3493a")) {
             val invalidItems = activity.content.filter {
-                it.silabas.isEmpty() || it.fonemas.isEmpty()
+                it.silabas.isEmpty() || it.grafemas.isEmpty()
             }
             if(invalidItems.isNotEmpty()){
                 throw IllegalArgumentException("La actividad debe de tener sílabas y grafemas.")
             }
         }
 
-        if(activity.moduloId==2){
+        if(activity.moduloId== UUID.fromString("6297d1fa-a65f-43cd-8070-5960bd89215b")){
             if(activity.content.size < 2){
                 throw IllegalArgumentException("Un memorama necesita al menos 2 imágenes.")
             }
@@ -38,8 +38,6 @@ class ManageActivity(private val repository: ActivityRepository) {
 
     fun  deleteActivity(activityId: UUID, requestingTeacherId:UUID){
         val activity= repository.findById(activityId) ?: throw Exception("La actividad no existe.")
-        repository.delete(activityId)
-    }
 
         // Verificar que el maestro es dueño de la actividad
         if (activity.teacherId != requestingTeacherId) {
@@ -48,4 +46,5 @@ class ManageActivity(private val repository: ActivityRepository) {
 
         repository.delete(activityId)
     }
+
 }

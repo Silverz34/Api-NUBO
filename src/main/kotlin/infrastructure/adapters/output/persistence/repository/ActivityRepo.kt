@@ -22,7 +22,7 @@ class ActivityRepo(override val findByLogin: Any) : ActivityRepository {
                 it[teacherId] = activity.teacherId
                 it[moduleId] = activity.moduloId
                 it[titulo] = activity.titulo
-                it[tipo] = if (activity.moduloId == 1) "Palabras" else "Memorama"
+                it[thumbnail] = activity.thumbnail
                 it[ispublic] = activity.public
             }.value
 
@@ -32,7 +32,7 @@ class ActivityRepo(override val findByLogin: Any) : ActivityRepository {
                     it[texto] = item.texto
                     it[imagenUrl] = item.imagenUrl
                     it[silabas] = item.silabas.joinToString(",")
-                    it[fonemas] = item.fonemas.joinToString(",")
+                    it[fonemas] = item.grafemas.joinToString(",")
                 }
             }
 
@@ -59,15 +59,16 @@ class ActivityRepo(override val findByLogin: Any) : ActivityRepository {
                     texto = contentRow[ActivityContents.texto],
                     imagenUrl = contentRow[ActivityContents.imagenUrl],
                     silabas = contentRow[ActivityContents.silabas]?.split(",") ?: emptyList(),
-                    fonemas = contentRow[ActivityContents.fonemas]?.split(",") ?: emptyList()
+                    grafemas = contentRow[ActivityContents.fonemas]?.split(",") ?: emptyList()
                 )
             }
 
             Activity(
                 id = row[activitiesTable.id].value,
                 teacherId = row[activitiesTable.teacherId].value,
-                moduloId = row[activitiesTable.moduleId],
+                moduloId = row[activitiesTable.moduleId].value,
                 titulo = row[activitiesTable.titulo],
+                thumbnail = row[activitiesTable.thumbnail],
                 public = row[activitiesTable.ispublic],
                 content = content
             )
@@ -88,15 +89,16 @@ class ActivityRepo(override val findByLogin: Any) : ActivityRepository {
                             texto = contentRow[ActivityContents.texto],
                             imagenUrl = contentRow[ActivityContents.imagenUrl],
                             silabas = contentRow[ActivityContents.silabas]?.split(",") ?: emptyList(),
-                            fonemas = contentRow[ActivityContents.fonemas]?.split(",") ?: emptyList()
+                            grafemas = contentRow[ActivityContents.fonemas]?.split(",") ?: emptyList()
                         )
                     }
 
                     Activity(
                         id = activityId,
                         teacherId = row[activitiesTable.teacherId].value,
-                        moduloId = row[activitiesTable.moduleId],
+                        moduloId = row[activitiesTable.moduleId].value,
                         titulo = row[activitiesTable.titulo],
+                        thumbnail = row[activitiesTable.thumbnail],
                         public = row[activitiesTable.ispublic],
                         content = content
                     )
@@ -118,15 +120,16 @@ class ActivityRepo(override val findByLogin: Any) : ActivityRepository {
                             texto = contentRow[ActivityContents.texto],
                             imagenUrl = contentRow[ActivityContents.imagenUrl],
                             silabas = contentRow[ActivityContents.silabas]?.split(",") ?: emptyList(),
-                            fonemas = contentRow[ActivityContents.fonemas]?.split(",") ?: emptyList()
+                            grafemas = contentRow[ActivityContents.fonemas]?.split(",") ?: emptyList()
                         )
                     }
 
                     Activity(
                         id = activityId,
                         teacherId = row[activitiesTable.teacherId].value,
-                        moduloId = row[activitiesTable.moduleId],
+                        moduloId = row[activitiesTable.moduleId].value,
                         titulo = row[activitiesTable.titulo],
+                        thumbnail = row[activitiesTable.thumbnail],
                         public = row[activitiesTable.ispublic],
                         content = content
                     )

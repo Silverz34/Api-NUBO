@@ -2,8 +2,8 @@ package infrastructure.adapters.input.http.routes
 
 import domain.` usecase`.AuthStudent
 import domain.` usecase`.AuthTeacher
+import domain.` usecase`.ManageActivity
 import domain.` usecase`.ManageStudent
-import domain.usecase.*
 import domain.ports.*
 import infrastructure.adapters.output.persistence.repository.*
 import infrastructure.adapters.output.security.BCryptPassword

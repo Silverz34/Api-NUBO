@@ -1,7 +1,10 @@
 package infrastructure.adapters.input.http.routes
 
-import domain.usecase.ManageActivity
+import domain.` usecase`.ManageActivity
 import domain.model.Activity
+import infrastructure.adapters.input.http.dto.ActivityDTO
+import infrastructure.adapters.input.http.mappers.toDomain
+import infrastructure.adapters.input.http.mappers.toResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
@@ -22,7 +25,7 @@ fun Route.activityRoutes(manageActivityUseCase: ManageActivity) {
             } catch (e: Exception) {
                 call.respond(
                     HttpStatusCode.InternalServerError,
-                    mapOf("error" to "Error al obtener actividades")
+                    mapOf("error" to "Error al obtener actividades: ${e.message}")
                 )
             }
         }
@@ -41,7 +44,7 @@ fun Route.activityRoutes(manageActivityUseCase: ManageActivity) {
                 } catch (e: IllegalArgumentException) {
                     return@get call.respond(
                         HttpStatusCode.BadRequest,
-                        mapOf("error" to "activityId inválido")
+                        mapOf("error" to "ID de actividad inválido: ${e.message}")
                     )
                 }
 
@@ -81,7 +84,7 @@ fun Route.activityRoutes(manageActivityUseCase: ManageActivity) {
                 } catch (e: IllegalArgumentException) {
                     return@post call.respond(
                         HttpStatusCode.BadRequest,
-                        mapOf("error" to "teacherId inválido")
+                        mapOf("error" to "ID de maestro inválido: ${e.message}")
                     )
                 }
 
@@ -91,7 +94,9 @@ fun Route.activityRoutes(manageActivityUseCase: ManageActivity) {
                 //     return@post call.respond(HttpStatusCode.Forbidden, mapOf("error" to "No autorizado"))
                 // }
 
-                val activity = call.receive<Activity>()
+                val request = call.receive<ActivityDTO>()
+
+                val activity = request.toDomain()
 
                 // Validar que el teacherId de la actividad coincide
                 if (activity.teacherId != teacherId) {
@@ -102,7 +107,7 @@ fun Route.activityRoutes(manageActivityUseCase: ManageActivity) {
                 }
 
                 val createdActivity = manageActivityUseCase.createActivity(activity)
-                call.respond(HttpStatusCode.Created, createdActivity)
+                call.respond(HttpStatusCode.Created, createdActivity.toResponse())
             } catch (e: IllegalArgumentException) {
                 call.respond(HttpStatusCode.BadRequest, mapOf("error" to e.message))
             } catch (e: Exception) {
@@ -135,7 +140,7 @@ fun Route.activityRoutes(manageActivityUseCase: ManageActivity) {
             } catch (e: Exception) {
                 call.respond(
                     HttpStatusCode.InternalServerError,
-                    mapOf("error" to "Error al obtener actividades")
+                    mapOf("error" to "Error al obtener actividades: ${e.message}")
                 )
             }
         }
