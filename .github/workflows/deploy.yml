@@ -1,0 +1,86 @@
+name: Deploy API NUBO
+
+on:
+  push:
+    branches:
+      - main
+      - production
+  workflow_dispatch:
+
+env:
+  JAVA_VERSION: '17'
+  KOTLIN_VERSION: '1.9.0'
+
+jobs:
+  deploy:
+    name: Build and Deploy to Production
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Run tests
+        run: ./gradlew test
+
+      - name: Build with Gradle
+        run: ./gradlew build -x test
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Execute pre-deploy script
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
+          'bash -s' < ./scripts/pre_deploy.sh
+
+      - name: Copy JAR to server
+        run: |
+          scp -i ~/.ssh/deploy_key \
+          build/libs/*.jar \
+          ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/opt/nubo-api/app.jar
+
+      - name: Copy environment variables
+        run: |
+          echo "DB_URL=${{ secrets.DB_URL }}" > .env
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+          echo "PORT=${{ secrets.PORT }}" >> .env
+          scp -i ~/.ssh/deploy_key .env \
+          ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/opt/nubo-api/.env
+          rm .env
+
+      - name: Execute post-deploy script
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
+          'bash -s' < ./scripts/post_deploy.sh
+      
+
+      - name: Health check
+        run: |
+          sleep 10
+          ssh -i ~/.ssh/deploy_key ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
+          "curl -f http://localhost:9000/health || exit 1"
+
+      - name: Deployment successful
+        if: success()
+        run: echo "Deployment completado exitosamente"
+
+      - name: Deployment failed
+        if: failure()
+        run: echo "Deployment falló. Revisa los logs."
