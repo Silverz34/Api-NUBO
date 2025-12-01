@@ -43,5 +43,4 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-dao:0.41.1")
     implementation("org.postgresql:postgresql:42.7.7")
 
-
 }
