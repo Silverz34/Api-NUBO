@@ -1,6 +1,5 @@
 package infrastructure
 
-
 import infrastructure.adapters.output.persistence.repository.ActivityRepo
 import infrastructure.adapters.output.persistence.repository.StudentRepo
 import infrastructure.adapters.output.persistence.repository.Teacherrepo
@@ -13,6 +12,7 @@ import domain.` usecase`.ManageActivity
 import domain.` usecase`.ManageStudent
 import infrastructure.adapters.input.http.routes.activityRoutes
 import infrastructure.adapters.input.http.routes.studentRoutes
+import infrastructure.config.configureCORS
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
@@ -34,12 +34,16 @@ fun main() {
 }
 
 fun Application.module() {
-    // Database connection (Postgres) - environment variables recommended
-    val dbUrl = "nubo.caiqszafsxyd.us-east-1.rds.amazonaws.com"
+    // IMPORTANTE: Configurar CORS PRIMERO antes que otros plugins
+    configureCORS()
+
+    // Database connection (Postgres)
+    val dbUrl = "jdbc:postgresql://nubo.caiqszafsxyd.us-east-1.rds.amazonaws.com:5432/nubo"
     val dbUser = "nuboAdmin"
     val dbPass = "NuboBase"
     val dbDriver = "org.postgresql.Driver"
     Database.connect(url = dbUrl, driver = dbDriver, user = dbUser, password = dbPass)
+
     // Content negotiation / serialization
     install(ContentNegotiation) {
         jackson()
@@ -51,8 +55,9 @@ fun Application.module() {
             realm = "Access to API"
             verifier(JwtProvider.verifier)
             validate { credential ->
-                // Audience check (kept minimal here)
-                if (credential.payload.audience.contains("nubo-app")) JWTPrincipal(credential.payload) else null
+                if (credential.payload.audience.contains("nubo-app")) {
+                    JWTPrincipal(credential.payload)
+                } else null
             }
         }
     }
@@ -69,15 +74,16 @@ fun Application.module() {
     val authStudent = AuthStudent(studentRepo)
     val manageActivity = ManageActivity(activityRepo)
 
-    // Routing: expose routes implemented in adapters/input/http/routes
+    // Routing
     routing {
         get("/") { call.respondText("NUBO API") }
 
-        // Teacher routes (register/login) — uses AuthTeacher usecase
+        get("/health") {
+            call.respond(mapOf("status" to "OK", "service" to "Nubo API"))
+        }
+
         teacherRoutes(authTeacher)
-
         studentRoutes(manageStudent, authStudent)
-
         activityRoutes(manageActivity)
     }
 }
