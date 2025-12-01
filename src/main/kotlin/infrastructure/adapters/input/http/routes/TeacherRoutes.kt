@@ -3,6 +3,7 @@ package infrastructure.adapters.input.http.routes
 import domain.` usecase`.AuthTeacher
 import infrastructure.adapters.input.http.dto.TeacherDTOS
 import infrastructure.adapters.input.http.dto.loginRequest
+import infrastructure.adapters.output.security.JwtProvider
 import infrastructure.adapters.input.http.mappers.toDomain
 import infrastructure.adapters.input.http.mappers.toResponse
 import io.ktor.http.HttpStatusCode
@@ -42,9 +43,10 @@ fun Route.teacherRoutes(authUseCase: AuthTeacher) {
         post("/login") {
             try {
                 val request = call.receive<loginRequest>()
-                val loggedTeacher =authUseCase.login(request.email, request.contraseña)
-                call.respond(HttpStatusCode.OK, loggedTeacher.toResponse())
-            }catch(e:Exception){
+                val loggedTeacher = authUseCase.login(request.email, request.contraseña)
+                val token = JwtProvider.generateToken(loggedTeacher.teacher_id!!, loggedTeacher.email, "TEACHER")
+                call.respond(HttpStatusCode.OK, mapOf("token" to token, "teacher" to loggedTeacher.toResponse()))
+            } catch (e: Exception) {
                 call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "${e.message}"))
             }
         }
