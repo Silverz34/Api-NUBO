@@ -16,6 +16,7 @@ data class Activity(
     val content: List<ContentItem>
 )
 
+@Serializable
 data class ContentItem(
     val id: UUID? = null,
     val texto: String,
