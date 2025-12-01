@@ -8,7 +8,7 @@ fun Application.configureCORS() {
     install(CORS) {
         // Permitir solicitudes
         allowHost("localhost:9000", schemes = listOf("http"))
-        allowHost("http://3.85.12.71:9000", schemes = listOf("http"))
+        allowHost("3.85.12.71:9000", schemes = listOf("http"))
 
         // Métodos HTTP permitidos
         allowMethod(HttpMethod.Get)
