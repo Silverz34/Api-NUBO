@@ -9,8 +9,9 @@ data class Activity(
     @Serializable(with = UUIDSerializer::class)
     val id: UUID? = null,
     val teacherId: UUID,
-    val moduloId: Int,
+    val moduloId: UUID,
     val titulo: String,
+    val thumbnail: String,
     val public: Boolean = true,
     val content: List<ContentItem>
 )
@@ -20,5 +21,5 @@ data class ContentItem(
     val texto: String,
     val imagenUrl: String,
     val silabas: List<String> = emptyList(),
-    val fonemas: List<String> = emptyList()
+    val grafemas: List<String> = emptyList()
 )

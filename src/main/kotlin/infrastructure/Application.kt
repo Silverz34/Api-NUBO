@@ -11,6 +11,7 @@ import domain.` usecase`.AuthStudent
 import domain.` usecase`.AuthTeacher
 import domain.` usecase`.ManageActivity
 import domain.` usecase`.ManageStudent
+import infrastructure.adapters.input.http.routes.activityRoutes
 import infrastructure.adapters.input.http.routes.studentRoutes
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -77,5 +78,7 @@ fun Application.module() {
         teacherRoutes(authTeacher)
 
         studentRoutes(manageStudent, authStudent)
+
+        activityRoutes(manageActivity)
     }
 }
