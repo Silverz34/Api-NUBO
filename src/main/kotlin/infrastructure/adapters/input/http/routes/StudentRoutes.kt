@@ -85,4 +85,22 @@ fun Route.studentRoutes(manageUse: ManageStudent, authUse: AuthStudent) {
         }
 
     }
+
+    route("/students"){
+        post("/login") {
+            try {
+                val loginData = call.receive<StudentLogin>()
+
+                val student = authUse.login(
+                    loginData.nombre,
+                    loginData.apellidoP,
+                    loginData.apellidoM
+                )
+
+                call.respond(student)
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.Unauthorized, mapOf("message" to e.message))
+            }
+        }
+    }
 }
