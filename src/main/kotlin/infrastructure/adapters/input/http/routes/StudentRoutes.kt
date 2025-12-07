@@ -88,6 +88,4 @@ fun Route.studentRoutes(manageUse: ManageStudent, authUse: AuthStudent) {
             }
         }
     }
-
-
 }

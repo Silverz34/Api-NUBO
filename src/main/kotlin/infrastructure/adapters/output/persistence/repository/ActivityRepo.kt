@@ -31,8 +31,8 @@ class ActivityRepo(override val findByLogin: Any) : ActivityRepository {
                     it[activityId] = newActivityId
                     it[texto] = item.texto
                     it[imagenUrl] = item.imagenUrl
-                    it[silabas] = item.silabas
-                    it[grafemas] = item.grafemas
+                    it[syllables] = item.syllables
+                    it[graphemes] = item.graphemes
                 }
             }
 
@@ -58,8 +58,8 @@ class ActivityRepo(override val findByLogin: Any) : ActivityRepository {
                     id = contentRow[ActivityContents.id].value,
                     texto = contentRow[ActivityContents.texto],
                     imagenUrl = contentRow[ActivityContents.imagenUrl],
-                    silabas = contentRow[ActivityContents.silabas],
-                    grafemas = contentRow[ActivityContents.grafemas]?: emptyList()
+                    syllables = contentRow[ActivityContents.syllables],
+                    graphemes = contentRow[ActivityContents.graphemes]?: emptyList()
                 )
             }
 
@@ -88,8 +88,8 @@ class ActivityRepo(override val findByLogin: Any) : ActivityRepository {
                             id = contentRow[ActivityContents.id].value,
                             texto = contentRow[ActivityContents.texto],
                             imagenUrl = contentRow[ActivityContents.imagenUrl],
-                            silabas = contentRow[ActivityContents.silabas],
-                            grafemas = contentRow[ActivityContents.grafemas] ?: emptyList()
+                            syllables = contentRow[ActivityContents.syllables],
+                            graphemes = contentRow[ActivityContents.graphemes] ?: emptyList()
                         )
                     }
 
@@ -119,8 +119,8 @@ class ActivityRepo(override val findByLogin: Any) : ActivityRepository {
                             id = contentRow[ActivityContents.id].value,
                             texto = contentRow[ActivityContents.texto],
                             imagenUrl = contentRow[ActivityContents.imagenUrl],
-                            silabas = contentRow[ActivityContents.silabas],
-                            grafemas = contentRow[ActivityContents.grafemas] ?: emptyList()
+                            syllables = contentRow[ActivityContents.syllables],
+                            graphemes = contentRow[ActivityContents.graphemes] ?: emptyList()
                         )
                     }
 
