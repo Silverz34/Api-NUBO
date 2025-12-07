@@ -70,6 +70,8 @@ fun Route.studentRoutes(manageUse: ManageStudent, authUse: AuthStudent) {
             }
         }
 
+    }
+    route("/students"){
         post("/login") {
             try {
                 val loginData = call.receive<StudentLogin>()
@@ -80,14 +82,12 @@ fun Route.studentRoutes(manageUse: ManageStudent, authUse: AuthStudent) {
                     loginData.apellidoM
                 )
 
-                val fullName = "${student.nombre} ${student.apellidoP} ${student.apellidoM}"
-                val token = JwtProvider.generateStudentToken(student.id!!, student.teacherId, fullName, "STUDENT")
-
-                call.respond(HttpStatusCode.OK, mapOf("token" to token, "student" to student.toResponse()))
+                call.respond(student)
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.Unauthorized, mapOf("message" to e.message))
             }
         }
-
     }
+
+
 }
