@@ -12,7 +12,7 @@ fun UUIDTable.array(name: String, columnType: VarCharColumnType = VarCharColumnT
 object ActivityContents: UUIDTable("content"){
     val activityId = reference("activity_id", activitiesTable, onDelete = ReferenceOption.CASCADE)
     val texto = varchar("word",100)
-    val imagenUrl = varchar("image", 500)
-    val silabas = text("syllables").nullable()
-    val grafemas = array("graphemes", VarCharColumnType())
+    val imagenUrl = text("image")
+    val silabas = array<String>("silabas", TextColumnType())
+    val grafemas = array<String>("grafemas", TextColumnType())
 }

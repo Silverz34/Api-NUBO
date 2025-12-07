@@ -8,6 +8,6 @@ object activitiesTable: UUIDTable("activity"){
     val teacherId= reference("teacher_id", TeacherTable, onDelete = ReferenceOption.CASCADE)
     val moduleId = reference("module_id", ModuleTable, onDelete = ReferenceOption.CASCADE)
     val titulo = varchar("name", 200)
-    val thumbnail = varchar("thumbnail", 255) //miniatura o portada o noc qjbfdjbvsjbj
+    val thumbnail = text("thumbnail")
     val ispublic = bool("isPublic").default(false)
 }

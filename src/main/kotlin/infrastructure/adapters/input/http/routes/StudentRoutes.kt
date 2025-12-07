@@ -5,6 +5,8 @@ import domain.` usecase`.AuthStudent
 import infrastructure.adapters.input.http.dto.StudentDTO
 import infrastructure.adapters.input.http.dto.StudentLogin // Importación del DTO de login
 import infrastructure.adapters.input.http.mappers.toDomain
+import infrastructure.adapters.input.http.mappers.toResponse
+import infrastructure.adapters.output.security.JwtProvider
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.request.receive
@@ -68,24 +70,7 @@ fun Route.studentRoutes(manageUse: ManageStudent, authUse: AuthStudent) {
             }
         }
 
-        post("/login") {
-            try {
-                val loginData = call.receive<StudentLogin>()
-
-                val student = authUse.login(
-                    loginData.nombre,
-                    loginData.apellidoP,
-                    loginData.apellidoM
-                )
-
-                call.respond(student)
-            } catch (e: Exception) {
-                call.respond(HttpStatusCode.Unauthorized, mapOf("message" to e.message))
-            }
-        }
-
     }
-
     route("/students"){
         post("/login") {
             try {

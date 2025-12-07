@@ -30,4 +30,18 @@ object JwtProvider {
             .withExpiresAt(Date(now + expireMillis))
             .sign(algorithm)
     }
+
+    fun generateStudentToken(studentId: UUID, teacherId: UUID, nombre: String, role: String = "STUDENT", expireMillis: Long = 24 * 60 * 60 * 1000): String {
+        val now = System.currentTimeMillis()
+        return JWT.create()
+            .withIssuer(ISSUER)
+            .withAudience(AUDIENCE)
+            .withSubject(studentId.toString())
+            .withClaim("studentId", studentId.toString())
+            .withClaim("teacherId", teacherId.toString())
+            .withClaim("nombre", nombre)
+            .withClaim("role", role)
+            .withExpiresAt(Date(now + expireMillis))
+            .sign(algorithm)
+    }
 }
