@@ -11,8 +11,8 @@ fun UUIDTable.array(name: String, columnType: VarCharColumnType = VarCharColumnT
 
 object ActivityContents: UUIDTable("content"){
     val activityId = reference("activity_id", activitiesTable, onDelete = ReferenceOption.CASCADE)
-    val texto = varchar("word",100)
-    val imagenUrl = varchar("image", 500)
-    val silabas = text("syllables").nullable()
-    val grafemas = array("graphemes", VarCharColumnType())
+    val texto = text("word")
+    val imagenUrl = text("image")
+    val silabas = array("syllables", TextColumnType())
+    val grafemas = array("graphemes", TextColumnType())
 }
