@@ -10,7 +10,7 @@ class ManageActivity(private val repository: ActivityRepository) {
         // Validaciones para módulo 1
         if (activity.moduloId == UUID.fromString("14387d49-4a1a-47d1-aa47-5a700db3493a")) {
             val invalidItems = activity.content.filter {
-                it.silabas.isEmpty() || it.grafemas.isEmpty()
+                it.syllables.isEmpty() || it.graphemes.isEmpty()
             }
             if(invalidItems.isNotEmpty()){
                 throw IllegalArgumentException("La actividad debe de tener sílabas y grafemas.")

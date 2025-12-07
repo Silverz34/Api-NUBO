@@ -21,6 +21,6 @@ data class ContentItem(
     val id: UUID? = null,
     val texto: String,
     val imagenUrl: String,
-    val silabas: List<String> = emptyList(),
-    val grafemas: List<String> = emptyList()
+    val syllables: List<String> = emptyList(),
+    val graphemes: List<String> = emptyList()
 )
