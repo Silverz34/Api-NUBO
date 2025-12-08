@@ -8,7 +8,7 @@ class ManageActivity(private val repository: ActivityRepository) {
     fun createActivity(activity: Activity): Activity {
 
         // Validaciones para módulo 1
-        if (activity.moduloId == UUID.fromString("14387d49-4a1a-47d1-aa47-5a700db3493a")) {
+        if (activity.moduleId == UUID.fromString("14387d49-4a1a-47d1-aa47-5a700db3493a")) {
             val invalidItems = activity.content.filter {
                 it.syllables.isEmpty() || it.graphemes.isEmpty()
             }
@@ -17,7 +17,7 @@ class ManageActivity(private val repository: ActivityRepository) {
             }
         }
 
-        if(activity.moduloId== UUID.fromString("6297d1fa-a65f-43cd-8070-5960bd89215b")){
+        if(activity.moduleId == UUID.fromString("6297d1fa-a65f-43cd-8070-5960bd89215b")){
             if(activity.content.size < 2){
                 throw IllegalArgumentException("Un memorama necesita al menos 2 imágenes.")
             }

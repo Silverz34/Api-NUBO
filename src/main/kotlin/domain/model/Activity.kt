@@ -9,7 +9,7 @@ data class Activity(
     @Serializable(with = UUIDSerializer::class)
     val id: UUID? = null,
     val teacherId: UUID,
-    val moduloId: UUID,
+    val moduleId: UUID,
     val titulo: String,
     val thumbnail: String,
     val public: Boolean = true,

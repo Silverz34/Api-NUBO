@@ -7,7 +7,7 @@ import infrastructure.adapters.input.http.dto.ActivityResponse
 fun ActivityDTO.toDomain(): Activity {
     return Activity(
         teacherId = this.teacherId,
-        moduloId = this.moduleId,
+        moduleId = this.moduleId,
         titulo = this.title,
         thumbnail = this.thumbnail,
         public = this.isPublic,
@@ -19,7 +19,7 @@ fun Activity.toResponse(): ActivityResponse {
     return ActivityResponse(
         id = this.id!!,
         teacherId = this.teacherId,
-        moduleId = this.moduloId,
+        moduleId = this.moduleId,
         title = this.titulo,
         thumbnail = this.thumbnail,
         isPublic = this.public,

@@ -20,7 +20,7 @@ class ActivityRepo(override val findByLogin: Any) : ActivityRepository {
         return transaction {
             val newActivityId = activitiesTable.insertAndGetId {
                 it[teacherId] = activity.teacherId
-                it[moduleId] = activity.moduloId
+                it[moduleId] = activity.moduleId
                 it[titulo] = activity.titulo
                 it[thumbnail] = activity.thumbnail
                 it[ispublic] = activity.public
@@ -66,7 +66,7 @@ class ActivityRepo(override val findByLogin: Any) : ActivityRepository {
             Activity(
                 id = row[activitiesTable.id].value,
                 teacherId = row[activitiesTable.teacherId].value,
-                moduloId = row[activitiesTable.moduleId].value,
+                moduleId = row[activitiesTable.moduleId].value,
                 titulo = row[activitiesTable.titulo],
                 thumbnail = row[activitiesTable.thumbnail],
                 public = row[activitiesTable.ispublic],
@@ -96,7 +96,7 @@ class ActivityRepo(override val findByLogin: Any) : ActivityRepository {
                     Activity(
                         id = activityId,
                         teacherId = row[activitiesTable.teacherId].value,
-                        moduloId = row[activitiesTable.moduleId].value,
+                        moduleId = row[activitiesTable.moduleId].value,
                         titulo = row[activitiesTable.titulo],
                         thumbnail = row[activitiesTable.thumbnail],
                         public = row[activitiesTable.ispublic],
@@ -127,7 +127,7 @@ class ActivityRepo(override val findByLogin: Any) : ActivityRepository {
                     Activity(
                         id = activityId,
                         teacherId = row[activitiesTable.teacherId].value,
-                        moduloId = row[activitiesTable.moduleId].value,
+                        moduleId = row[activitiesTable.moduleId].value,
                         titulo = row[activitiesTable.titulo],
                         thumbnail = row[activitiesTable.thumbnail],
                         public = row[activitiesTable.ispublic],
