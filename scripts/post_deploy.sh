@@ -4,8 +4,8 @@ set -e
 
 echo "Iniciando POST-DEPLOY"
 
-APP_DIR="/opt/nubo-api"
-LOG_DIR="/var/log/nubo-api"
+APP_DIR="/opt/NuboAPI"
+LOG_DIR="/var/log/NuboAPI"
 
 # Verificar que el JAR nuevo existe
 echo "Verificando que el archivo JAR fue copiado..."
@@ -33,7 +33,7 @@ fi
 
 # Crear/actualizar el servicio systemd
 echo "⚙Configurando servicio systemd..."
-sudo tee /etc/systemd/system/nubo-api.service > /dev/null << EOF
+sudo tee /etc/systemd/system/NuboAPI.service > /dev/null << EOF
 [Unit]
 Description=NUBO API - Ktor Application
 After=network.target
@@ -62,22 +62,22 @@ echo "Servicio systemd configurado"
 # Recargar systemd y habilitar el servicio
 echo "Recargando configuración de systemd..."
 sudo systemctl daemon-reload
-sudo systemctl enable nubo-api
+sudo systemctl enable NuboAPI
 
 echo "▶Iniciando aplicación..."
-sudo systemctl start nubo-api
+sudo systemctl start NuboAPI
 
 echo "Esperando a que la aplicación inicie (15 segundos)..."
 sleep 15
 
 # Verificar que el servicio está corriendo
 echo "Verificando estado del servicio..."
-if systemctl is-active --quiet nubo-api; then
-    echo "Servicio nubo-api está activo"
+if systemctl is-active --quiet NuboApi; then
+    echo "Servicio NuboAPI está activo"
 else
     echo "Error: El servicio no pudo iniciarse"
     echo "Últimas líneas del log:"
-    sudo journalctl -u nubo-api -n 20 --no-pager
+    sudo journalctl -u NuboAPI -n 20 --no-pager
     exit 1
 fi
 
@@ -144,7 +144,7 @@ echo "================================================"
 echo "Información del deployment:"
 echo "   - Servicio: ACTIVO"
 echo "   - Puerto: 9000"
-echo "   - PID: $(systemctl show -p MainPID nubo-api | cut -d= -f2)"
+echo "   - PID: $(systemctl show -p MainPID NuboAPI | cut -d= -f2)"
 echo "   - Logs: $LOG_DIR"
 echo "   - Memoria: ${MEMORY_USAGE}%"
 echo ""
@@ -155,10 +155,10 @@ echo "   - http://localhost:9000/teacher/register"
 echo "   - http://localhost:9000/teacher/login"
 echo ""
 echo "Comandos útiles:"
-echo "   - Ver logs:         sudo journalctl -u nubo-api -f"
-echo "   - Estado servicio:  sudo systemctl status nubo-api"
-echo "   - Reiniciar:        sudo systemctl restart nubo-api"
-echo "   - Detener:          sudo systemctl stop nubo-api"
+echo "   - Ver logs:         sudo journalctl -u NuboAPI -f"
+echo "   - Estado servicio:  sudo systemctl status NuboAPI"
+echo "   - Reiniciar:        sudo systemctl restart NuboAPI"
+echo "   - Detener:          sudo systemctl stop NuboAPI"
 echo "================================================"
 
 exit 0

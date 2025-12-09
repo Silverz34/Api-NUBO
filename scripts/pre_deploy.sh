@@ -4,8 +4,8 @@ set -e
 echo "Iniciando PRE-DEPLOY"
 
 # Directorio de la aplicación
-APP_DIR="/opt/nubo-api"
-BACKUP_DIR="/opt/nubo-api/backups"
+APP_DIR="/opt/NuboAPI"
+BACKUP_DIR="/opt/NuboAPI/backups"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 
 echo "Verificando directorios..."
@@ -61,8 +61,8 @@ fi
 
 # Detener la aplicación actual (si está corriendo)
 echo "Deteniendo aplicación actual..."
-if systemctl is-active --quiet nubo-api; then
-    sudo systemctl stop nubo-api
+if systemctl is-active --quiet NuboAPI; then
+    sudo systemctl stop NuboAPI
     echo "Aplicación detenida"
 
     sleep 3
@@ -80,7 +80,7 @@ fi
 echo "Puerto 9000 disponible"
 
 # Limpiar logs antiguos
-LOG_DIR="/var/log/nubo-api"
+LOG_DIR="/var/log/NuboAPI"
 if [ -d "$LOG_DIR" ]; then
     echo "🗑️  Limpiando logs antiguos (mayores a 7 días)..."
     find $LOG_DIR -name "*.log" -mtime +7 -delete || true
