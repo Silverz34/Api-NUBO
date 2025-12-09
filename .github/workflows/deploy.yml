@@ -39,22 +39,26 @@ jobs:
       - name: Build with Gradle and create fat JAR
         run: ./gradlew clean shadowJar
 
-      - name: List generated JARs
-        run: find build/libs -name "*.jar" -print
-
+      # Busca el JAR generado por ShadowJar (usualmente termina en -all.jar)
       - name: Move JAR to root and prepare for deployment
         id: move_jar
         run: |
+          # Busca cualquier jar que termine en all.jar dentro de build/libs
           JAR_FULL_PATH=$(find build/libs -name "*-all.jar" | head -n 1)
+          
           if [ -z "$JAR_FULL_PATH" ]; then
-            echo "Error: No se encontró el JAR generado"
+            echo "Error: No se encontró el JAR generado (busca *-all.jar)"
             exit 1
           fi
-          JAR_FILENAME=$(basename "$JAR_FULL_PATH")
-          mv "$JAR_FULL_PATH" "nubo-api.jar"
-          echo "JAR movido y renombrado a: nubo-api.jar"
-          echo "moved_jar_filename=nubo-api.jar" >> $GITHUB_OUTPUT
+          
+          # RENOMBRAR AL NOMBRE EXACTO QUE ESPERA EL SERVIDOR
+          TARGET_NAME="mi-apiNubo.jar"
+          
+          mv "$JAR_FULL_PATH" "$TARGET_NAME"
+          echo "JAR movido y renombrado a: $TARGET_NAME"
+          echo "moved_jar_filename=$TARGET_NAME" >> $GITHUB_OUTPUT
 
+      # Ruta ajustada a /opt/NuboAPI/scripts/
       - name: Execute pre-deployment script on EC2 (Stop old app)
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -62,8 +66,9 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
-            sudo /opt/apps/nubo-api/scripts/pre-deploy
+            sudo /opt/NuboAPI/scripts/pre-deploy
 
+      # Ruta ajustada a /opt/NuboAPI/
       - name: Copy JAR to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -71,9 +76,10 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           source: "${{ steps.move_jar.outputs.moved_jar_filename }}"
-          target: "/opt/apps/nubo-api/"
+          target: "/opt/NuboAPI/"
           overwrite: true
 
+      # Ruta ajustada a /opt/NuboAPI/scripts/
       - name: Execute post-deployment script on EC2 (Start app)
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -81,8 +87,9 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
-            sudo /opt/apps/nubo-api/scripts/post-deploy
+            sudo /opt/NuboAPI/scripts/post-deploy
 
+      # Verificación ajustada al nombre real del servicio (NuboAPI)
       - name: Verify deployment
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -91,6 +98,9 @@ jobs:
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
             echo "Verificando estado del servicio..."
-            sudo systemctl status nubo-api || echo "Servicio no configurado aún"
+            sudo systemctl status NuboAPI || echo "Servicio no activo"
+            
+            # Nota: netstat requiere 'sudo apt install net-tools'
+            # Si falla, no rompe el pipeline (|| true)
             echo "Verificando puerto 9000..."
-            sudo netstat -tulpn | grep 9000 || echo "Puerto 9000 no está escuchando"
+            sudo netstat -tulpn | grep 9000 || echo "Advertencia: Puerto 9000 no detectado aún"
