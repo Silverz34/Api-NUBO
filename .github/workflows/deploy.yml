@@ -64,8 +64,8 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
-            sudo sed -i 's/\r$//' /opt/NuboAPI/scripts/pre_deploy
-            sudo sed -i 's/\r$//' /opt/NuboAPI/scripts/post_deploy
+            sudo perl -pi -e 's/\r//g' /opt/NuboAPI/scripts/pre_deploy
+            sudo perl -pi -e 's/\r//g' /opt/NuboAPI/scripts/post_deploy
             
             sudo chmod +x /opt/NuboAPI/scripts/pre_deploy
             sudo chmod +x /opt/NuboAPI/scripts/post_deploy
