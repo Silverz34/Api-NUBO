@@ -88,7 +88,7 @@ fun Application.module() {
 
         get("/health") {
             call.respond(mapOf("status" to "OK", "service" to "Nubo API"))
-        }
+        }//7s
 
         teacherRoutes(authTeacher)
         studentRoutes(manageStudent, authStudent)
