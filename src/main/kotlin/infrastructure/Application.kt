@@ -38,6 +38,7 @@ fun Application.module() {
     configureCORS()
     //push de prueba
     //push de prueba 3
+    //push de prueba 4
     // Database connection (Postgres)
     val dbUrl = "jdbc:postgresql://nubo.caiqszafsxyd.us-east-1.rds.amazonaws.com:5432/postgres"
     val dbUser = "nuboAdmin"
