@@ -22,7 +22,7 @@ if [ ! -d "$LOG_DIR" ]; then
     sudo mkdir -p $LOG_DIR
     # Nota: Es más seguro usar la variable $USER o el usuario específico del servicio (User_Nubo)
     # Aquí asumimos que $USER es quien ejecuta el script (root o deployer)
-    sudo chown -R $USER:$USER $LOG_DIR
+    sudo chown -R User_Nubo:User_Nubo $LOG_DIR
 fi
 
 # Cargar variables de entorno
@@ -48,7 +48,7 @@ After=network.target
 
 [Service]
 Type=simple
-User=$USER # CAMBIAR si usaste User_Nubo
+User=User_Nubo # CAMBIAR si usaste User_Nubo
 WorkingDirectory=$APP_DIR
 EnvironmentFile=$APP_DIR/.env
 ExecStart=/usr/bin/java -jar $APP_DIR/$JAR_NAME

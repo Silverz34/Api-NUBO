@@ -13,7 +13,7 @@ echo "Verificando directorios..."
 if [ ! -d "$APP_DIR" ]; then
     echo "⚠Directorio $APP_DIR no existe. Creándolo..."
     sudo mkdir -p $APP_DIR
-    sudo chown -R $USER:$USER $APP_DIR
+    sudo chown -R User_Nubo:User_Nubo $APP_DIR
 fi
 
 # Crear directorio de backups si no existe
