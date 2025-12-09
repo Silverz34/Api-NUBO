@@ -36,7 +36,15 @@ fun main() {
 fun Application.module() {
     // IMPORTANTE: Configurar CORS PRIMERO antes que otros plugins
     configureCORS()
-
+    //qs
+    //push de prueba
+    //push de prueba 3
+    //push de prueba 4
+    //push de prueba 5
+    //push de prueba 6
+    //push 8 creo
+    //push 10 creo
+    //A
     // Database connection (Postgres)
     val dbUrl = "jdbc:postgresql://nubo.caiqszafsxyd.us-east-1.rds.amazonaws.com:5432/postgres"
     val dbUser = "nuboAdmin"
