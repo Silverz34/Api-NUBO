@@ -36,6 +36,8 @@ fun main() {
 fun Application.module() {
     // IMPORTANTE: Configurar CORS PRIMERO antes que otros plugins
     configureCORS()
+
+            //qs
     //push de prueba
     //push de prueba 3
     //push de prueba 4
