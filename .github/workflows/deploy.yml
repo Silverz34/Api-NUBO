@@ -61,7 +61,7 @@ jobs:
           echo "moved_jar_filename=mi-apiNubo.jar" >> $GITHUB_OUTPUT
 
       # -------------------------------------------------------------------
-      # EJECUCIÓN PRE-DESPLIEGUE (Ruta /opt/NubiAPI y binario sin .sh)
+      # EJECUCIÓN PRE-DESPLIEGUE (Ruta /opt/NuboAPI y binario sin .sh)
       # -------------------------------------------------------------------
       - name: Execute pre-deployment script on EC2 (Stop old app)
         uses: appleboy/ssh-action@v1.0.3
@@ -73,7 +73,7 @@ jobs:
             sudo /opt/NuboAPI/scripts/pre_deploy
 
       # -------------------------------------------------------------------
-      # COPIA DEL JAR (Ruta /opt/NubiAPI y nombre de JAR ajustado)
+      # COPIA DEL JAR (Ruta /opt/NuboAPI y nombre de JAR ajustado)
       # -------------------------------------------------------------------
       - name: Copy JAR to EC2
         uses: appleboy/scp-action@v0.1.7
@@ -98,7 +98,7 @@ jobs:
             sudo /opt/NuboAPI/scripts/post_deploy
 
       # -------------------------------------------------------------------
-      # VERIFICACIÓN DEL SERVICIO SYSTEMD (NubiAPI)
+      # VERIFICACIÓN DEL SERVICIO SYSTEMD (NuboAPI)
       # -------------------------------------------------------------------
       - name: Verify deployment
         uses: appleboy/ssh-action@v1.0.3
