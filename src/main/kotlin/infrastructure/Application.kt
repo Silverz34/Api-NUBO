@@ -82,7 +82,7 @@ fun Application.module() {
     val authStudent = AuthStudent(studentRepo)
     val manageActivity = ManageActivity(activityRepo)
 
-    // Routing
+    // Routingsdf
     routing {
         get("/") { call.respondText("NUBO API") }
 
