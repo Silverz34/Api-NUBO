@@ -21,11 +21,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Obtener el código
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.branch || github.ref }}
 
+      # 2. Configurar Java 21
       - name: Setup JDK 21
         uses: actions/setup-java@v4
         with:
@@ -33,64 +35,78 @@ jobs:
           java-version: '21'
           cache: 'gradle'
 
+      # 3. Permisos para el wrapper de Gradle
       - name: Make Gradle wrapper executable
         run: chmod +x gradlew
 
-      - name: Build with Gradle and create fat JAR
+      # 4. Construir el Fat JAR
+      - name: Build with Gradle
         run: ./gradlew clean shadowJar
 
-      - name: List generated JARs
-        run: find build/libs -name "*.jar" -print
-
-      - name: Move JAR to root and prepare for deployment
-        id: move_jar
+      # 5. Renombrar el JAR generado al nombre estandar que espera el servidor
+      - name: Prepare JAR for Deployment
+        id: prepare_jar
         run: |
+          # Busca el jar generado en build/libs (usualmente termina en -all.jar por shadowJar)
+          # Si tu build genera un nombre distinto, ajusta el patrón "-all.jar"
           JAR_FULL_PATH=$(find build/libs -name "*-all.jar" | head -n 1)
+          
           if [ -z "$JAR_FULL_PATH" ]; then
-            echo "Error: No se encontró el JAR generado"
+            echo "Error: No se encontró el JAR generado en build/libs/"
             exit 1
           fi
-          JAR_FILENAME=$(basename "$JAR_FULL_PATH")
-          mv "$JAR_FULL_PATH" "nubo-api.jar"
-          echo "JAR movido y renombrado a: nubo-api.jar"
-          echo "moved_jar_filename=nubo-api.jar" >> $GITHUB_OUTPUT
+          
+          # Nombre FINAL que usaremos en el servidor
+          TARGET_NAME="mi-apiNubo.jar"
+          
+          mv "$JAR_FULL_PATH" "$TARGET_NAME"
+          echo "JAR encontrado y renombrado a: $TARGET_NAME"
+          
+          # Guardamos el nombre en una variable de salida para el paso de SCP
+          echo "jar_filename=$TARGET_NAME" >> $GITHUB_OUTPUT
 
-      - name: Execute pre-deployment script on EC2 (Stop old app)
+      # 6. Ejecutar PRE-DEPLOY en el servidor (Detener servicio)
+      - name: Execute Pre-Deploy (Stop App)
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
-            sudo /opt/apps/nubo-api/scripts/pre-deploy
+            sudo /opt/NuboAPI/scripts/pre-deploy
 
-      - name: Copy JAR to EC2
+      # 7. Subir el archivo JAR al servidor
+      - name: Upload JAR to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-          source: "${{ steps.move_jar.outputs.moved_jar_filename }}"
-          target: "/opt/apps/nubo-api/"
+          source: "${{ steps.prepare_jar.outputs.jar_filename }}"
+          target: "/opt/NuboAPI/"
           overwrite: true
 
-      - name: Execute post-deployment script on EC2 (Start app)
+      # 8. Ejecutar POST-DEPLOY en el servidor (Iniciar servicio)
+      - name: Execute Post-Deploy (Start App)
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
-            sudo /opt/apps/nubo-api/scripts/post-deploy
+            sudo /opt/NuboAPI/scripts/post-deploy
 
-      - name: Verify deployment
+      # 9. Verificación final
+      - name: Health Check
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
-            echo "Verificando estado del servicio..."
-            sudo systemctl status nubo-api || echo "Servicio no configurado aún"
-            echo "Verificando puerto 9000..."
-            sudo netstat -tulpn | grep 9000 || echo "Puerto 9000 no está escuchando"
+            echo "Estado del servicio:"
+            sudo systemctl status NuboAPI --no-pager
+            
+            echo "Verificando puerto 9000:"
+            # Usamos || true para que no falle el pipeline si netstat no está instalado, pero te avise
+            sudo netstat -tulpn | grep 9000 || echo "Advertencia: Puerto 9000 no detectado inmediatamente (puede tardar en arrancar)"
