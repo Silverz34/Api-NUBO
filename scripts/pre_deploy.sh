@@ -33,7 +33,7 @@ then
     echo "Limpiando backups antiguos (manteniendo los últimos 5)..."
     ls -t $BACKUP_DIR/app_backup_*.jar | tail -n +6 | xargs -r rm
 else
-    echo "ℹNo hay versión anterior para hacer backup (primer despliegue)"
+    echo "No hay versión anterior para hacer backup (primer despliegue)"
 fi
 
 # Verificar conectividad con la base de datos (se mantiene el host RDS)

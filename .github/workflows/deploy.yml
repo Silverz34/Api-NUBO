@@ -42,9 +42,6 @@ jobs:
       - name: List generated JARs
         run: find build/libs -name "*.jar" -print
 
-      # -------------------------------------------------------------------
-      # AJUSTE DE RENOMBRADO DEL JAR (mi-apiNubo.jar y find simplificado)
-      # -------------------------------------------------------------------
       - name: Move JAR to root and prepare for deployment
         id: move_jar
         run: |
@@ -60,9 +57,6 @@ jobs:
           echo "JAR movido y renombrado a: mi-apiNubo.jar"
           echo "moved_jar_filename=mi-apiNubo.jar" >> $GITHUB_OUTPUT
 
-      # -------------------------------------------------------------------
-      # EJECUCIÓN PRE-DESPLIEGUE (Ruta /opt/NuboAPI y binario sin .sh)
-      # -------------------------------------------------------------------
       - name: Execute pre-deployment script on EC2 (Stop old app)
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -70,11 +64,14 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
+            sudo sed -i 's/\r$//' /opt/NuboAPI/scripts/pre_deploy
+            sudo sed -i 's/\r$//' /opt/NuboAPI/scripts/post_deploy
+            
+            sudo chmod +x /opt/NuboAPI/scripts/pre_deploy
+            sudo chmod +x /opt/NuboAPI/scripts/post_deploy
+            
             sudo /opt/NuboAPI/scripts/pre_deploy
 
-      # -------------------------------------------------------------------
-      # COPIA DEL JAR (Ruta /opt/NuboAPI y nombre de JAR ajustado)
-      # -------------------------------------------------------------------
       - name: Copy JAR to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -85,9 +82,6 @@ jobs:
           target: "/opt/NuboAPI"
           overwrite: true
 
-      # -------------------------------------------------------------------
-      # EJECUCIÓN POST-DESPLIEGUE (Ruta /opt/NubiAPI y binario sin .sh)
-      # -------------------------------------------------------------------
       - name: Execute post-deployment script on EC2 (Start app)
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -97,9 +91,6 @@ jobs:
           script: |
             sudo /opt/NuboAPI/scripts/post_deploy
 
-      # -------------------------------------------------------------------
-      # VERIFICACIÓN DEL SERVICIO SYSTEMD (NuboAPI)
-      # -------------------------------------------------------------------
       - name: Verify deployment
         uses: appleboy/ssh-action@v1.0.3
         with:
