@@ -42,6 +42,7 @@ fun Application.module() {
     //push de prueba 5
     //push de prueba 6
     //push 8 creo
+    //push 10 creo
     // Database connection (Postgres)
     val dbUrl = "jdbc:postgresql://nubo.caiqszafsxyd.us-east-1.rds.amazonaws.com:5432/postgres"
     val dbUser = "nuboAdmin"

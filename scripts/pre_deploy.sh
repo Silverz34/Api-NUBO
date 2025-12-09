@@ -5,7 +5,7 @@ echo "Iniciando PRE-DEPLOY"
 
 # Directorio de la aplicación
 APP_DIR="/opt/NuboAPI"
-BACKUP_DIR="/opt/NuboAPI/scripts"
+BACKUP_DIR="/opt/NuboAPI/backups"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 JAR_NAME="mi-apiNubo.jar" # Nombre del JAR a respaldar
 
