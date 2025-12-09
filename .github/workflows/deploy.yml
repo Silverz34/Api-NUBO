@@ -43,16 +43,19 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean shadowJar
 
-      # 5. Renombrar el JAR generado al nombre estandar que espera el servidor
+      # 5. Renombrar el JAR (CORREGIDO: Acepta cualquier nombre)
       - name: Prepare JAR for Deployment
         id: prepare_jar
         run: |
-          # Busca el jar generado en build/libs (usualmente termina en -all.jar por shadowJar)
-          # Si tu build genera un nombre distinto, ajusta el patrón "-all.jar"
-          JAR_FULL_PATH=$(find build/libs -name "*-all.jar" | head -n 1)
+          echo "📂 Listando archivos generados para debug:"
+          ls -R build/libs/
+          
+          # CAMBIO CRÍTICO: Buscamos "*.jar" en lugar de "*-all.jar"
+          # Esto atrapa 'app-1.0.jar', 'app-snapshot.jar', etc.
+          JAR_FULL_PATH=$(find build/libs -name "*.jar" | head -n 1)
           
           if [ -z "$JAR_FULL_PATH" ]; then
-            echo "Error: No se encontró el JAR generado en build/libs/"
+            echo "❌ Error: No se encontró ningún archivo .jar en build/libs/"
             exit 1
           fi
           
@@ -60,7 +63,7 @@ jobs:
           TARGET_NAME="mi-apiNubo.jar"
           
           mv "$JAR_FULL_PATH" "$TARGET_NAME"
-          echo "JAR encontrado y renombrado a: $TARGET_NAME"
+          echo "✅ JAR encontrado ($JAR_FULL_PATH) y renombrado a: $TARGET_NAME"
           
           # Guardamos el nombre en una variable de salida para el paso de SCP
           echo "jar_filename=$TARGET_NAME" >> $GITHUB_OUTPUT
@@ -108,5 +111,5 @@ jobs:
             sudo systemctl status NuboAPI --no-pager
             
             echo "Verificando puerto 9000:"
-            # Usamos || true para que no falle el pipeline si netstat no está instalado, pero te avise
-            sudo netstat -tulpn | grep 9000 || echo "Advertencia: Puerto 9000 no detectado inmediatamente (puede tardar en arrancar)"
+            # Usamos || true para que no falle el pipeline si netstat no está instalado
+            sudo netstat -tulpn | grep 9000 || echo "Advertencia: Puerto 9000 no detectado inmediatamente"
